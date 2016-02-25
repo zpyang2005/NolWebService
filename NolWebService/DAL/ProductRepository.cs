@@ -45,7 +45,8 @@ namespace NolWebService.DAL
             }
         }
 
-        public List<Product> GetBySearchID(int searchID)
+        // List<Product>
+        public IEnumerable<Product> GetBySearchID(int searchID)
         {
             List<Product> products = new List<Product>();
             string sql = "select L.ItemID, L.SubscriberID, L.CategoryID, L.PartNumberAbbott, L.AbbottDescription, L.SizeText, L.DescriptionText, L.WebNoteText," +

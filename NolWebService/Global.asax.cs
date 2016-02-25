@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Xml.Serialization;
+using NolWebService.Models;
 
 namespace NolWebService
 {
@@ -25,8 +27,11 @@ namespace NolWebService
 
         protected void Application_Start()
         {
+            var config = GlobalConfiguration.Configuration;
+            //config.Formatters.Remove(config.Formatters.JsonFormatter);
+            var xml =  config.Formatters.XmlFormatter;
+            xml.Indent = true;            
             RegisterRoutes(RouteTable.Routes);
-
             //BundleTable.Bundles.RegisterTemplateBundles();
         }
     }
