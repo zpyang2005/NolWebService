@@ -19,4 +19,6 @@ E:\NOL\WebService\NolWebService\NolWebService\bin\System.Web.Http.xml
 E:\NOL\WebService\NolWebService\NolWebService\bin\System.Web.Http.WebHost.xml
 E:\NOL\WebService\NolWebService\NolWebService\obj\Debug\NolWebService.dll
 E:\NOL\WebService\NolWebService\NolWebService\obj\Debug\NolWebService.pdb
+E:\NOL\WebService\NolWebService\NolWebService\bin\NLog.dll
+E:\NOL\WebService\NolWebService\NolWebService\bin\NLog.xml
 E:\NOL\WebService\NolWebService\NolWebService\obj\Debug\NolWebService.csprojResolveAssemblyReference.cache

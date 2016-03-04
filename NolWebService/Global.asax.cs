@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Tracing;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Xml.Serialization;
 using NolWebService.Models;
+using NolWebService.Filter;
+using NolWebService.Infrastructure;
 
 namespace NolWebService
 {
@@ -22,17 +25,17 @@ namespace NolWebService
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
-
         }
 
         protected void Application_Start()
         {
             var config = GlobalConfiguration.Configuration;
-            //config.Formatters.Remove(config.Formatters.JsonFormatter);
+            //config.Filters.Add(new NotImplExceptionFilterAttribute()); 
+            config.Services.Replace(typeof(ITraceWriter), new NLogger());
+            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.LocalOnly;
             var xml =  config.Formatters.XmlFormatter;
             xml.Indent = true;            
             RegisterRoutes(RouteTable.Routes);
-            //BundleTable.Bundles.RegisterTemplateBundles();
         }
     }
 }

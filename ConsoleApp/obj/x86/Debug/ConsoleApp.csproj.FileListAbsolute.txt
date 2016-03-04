@@ -18,6 +18,6 @@ E:\NOL\WebService\NolWebService\ConsoleApp\bin\Debug\System.Net.Http.WebRequest.
 E:\NOL\WebService\NolWebService\ConsoleApp\bin\Debug\System.Runtime.xml
 E:\NOL\WebService\NolWebService\ConsoleApp\bin\Debug\System.Threading.Tasks.xml
 E:\NOL\WebService\NolWebService\ConsoleApp\obj\x86\Debug\ConsoleApp.csproj.App.config
-E:\NOL\WebService\NolWebService\ConsoleApp\obj\x86\Debug\ConsoleApp.csprojResolveAssemblyReference.cache
 E:\NOL\WebService\NolWebService\ConsoleApp\obj\x86\Debug\ConsoleApp.exe
 E:\NOL\WebService\NolWebService\ConsoleApp\obj\x86\Debug\ConsoleApp.pdb
+E:\NOL\WebService\NolWebService\ConsoleApp\obj\x86\Debug\ConsoleApp.csprojResolveAssemblyReference.cache

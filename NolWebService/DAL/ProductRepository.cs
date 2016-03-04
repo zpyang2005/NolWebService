@@ -13,11 +13,8 @@ using AcdAttribute = ACD.Biz.Attribute;
 
 namespace NolWebService.DAL
 {
-    public class ProductRepository
+    public class ProductRepository : BaseRepository
     {
-        private static string acdConnString = ConfigurationManager.ConnectionStrings["AcdDBConn"].ConnectionString;
-        private static string nolConnString = ConfigurationManager.ConnectionStrings["NolDBConn"].ConnectionString;
-
         public int GetByCriteria(int categoryID, int subCategoryID, int measureSystem, int sizeCode, int lengthCode, int headCode, int driveCode, 
             int materialCode, int finishCode, int pointCode, int styleCode)
         {
@@ -45,7 +42,31 @@ namespace NolWebService.DAL
             }
         }
 
-        // List<Product>
+        public int GetByKeyword(string keyword)
+        {
+            NOL.Biz.ListItem listItem = new NOL.Biz.ListItem();
+            try
+            {
+                int searchID;
+                int subscriberID = 0;
+                if (!listItem.SearchByKeyword(subscriberID, keyword, out searchID))
+                {
+                    // Error occurred
+                    return -1;
+                }
+                if (searchID == 0)
+                {
+                    // No item was found when searching with the criteria. Please try to adjust the criteria and search again.
+                    return 0;
+                }
+                return searchID;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
         public IEnumerable<Product> GetBySearchID(int searchID)
         {
             List<Product> products = new List<Product>();
@@ -59,6 +80,7 @@ namespace NolWebService.DAL
             SqlCommand cmd = new SqlCommand(sql, new SqlConnection(nolConnString));
             SqlParameterCollection sqlParams = cmd.Parameters;
             sqlParams.Add(new SqlParameter("@SearchID", SqlDbType.Int)).Value = searchID;
+            SupplierRepository supplierRepository = new SupplierRepository();
             try
             {
                 cmd.Connection.Open();
@@ -67,9 +89,9 @@ namespace NolWebService.DAL
                 while (reader.Read())
                 {
                     Product product = BuildProduct(reader);
-                    Supplier supplier = BuildSupplier(reader);
+                    Supplier supplier = supplierRepository.BuildSupplier(reader);
                     ProductAttribute productAttribute = BuildProductAttribute(reader);
-                    Address address = BuildAddress(reader);
+                    Address address = supplierRepository.BuildAddress(reader);
                     product.Supplier = supplier;
                     product.Attribute = productAttribute;
                     product.Supplier.Address = address;
@@ -87,7 +109,7 @@ namespace NolWebService.DAL
             }
         }
 
-        private Product BuildProduct(SqlDataReader reader)
+        public Product BuildProduct(SqlDataReader reader)
         {
             Product product = new Product();
             product.ProductID = reader["ItemID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ItemID"]);
@@ -107,19 +129,7 @@ namespace NolWebService.DAL
             return product;
         }
 
-        private Supplier BuildSupplier(SqlDataReader reader)
-        {
-            Supplier supplier = new Supplier();
-            supplier.Code = reader["SubscriberCode"] == DBNull.Value ? string.Empty : Convert.ToString(reader["SubscriberCode"]).Trim();
-            supplier.Name = reader["SubscriberName"] == DBNull.Value ? string.Empty : Convert.ToString(reader["SubscriberName"]).Trim();
-            supplier.MinimumOrder = reader["MinOrder"] == DBNull.Value ? 0 : Convert.ToInt32(reader["MinOrder"]);
-            supplier.MinimumLine = reader["MinLine"] == DBNull.Value ? 0 : Convert.ToInt32(reader["MinLine"]);
-            supplier.Sale1 = reader["Sales1"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Sales1"]).Trim();
-            supplier.Sale2 = reader["Sales2"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Sales2"]).Trim();
-            return supplier;
-        }
-
-        private ProductAttribute BuildProductAttribute(SqlDataReader reader)
+        public ProductAttribute BuildProductAttribute(SqlDataReader reader)
         {
             int measureSystem = reader["MeasureSystem"] == DBNull.Value ? 0 : Convert.ToInt32(reader["MeasureSystem"]);
             int sizeCode = reader["SizeCode"] == DBNull.Value ? 0 : Convert.ToInt32(reader["SizeCode"]);
@@ -150,22 +160,5 @@ namespace NolWebService.DAL
             return pa;
         }
 
-        private Address BuildAddress(SqlDataReader reader)
-        {
-            Address address = new Address();
-            address.ContactName = reader["ContactName"] == DBNull.Value ? string.Empty : Convert.ToString(reader["ContactName"]).Trim();
-            address.Street= reader["Street"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Street"]).Trim();
-            address.City = reader["City"] == DBNull.Value ? string.Empty : Convert.ToString(reader["City"]).Trim();
-            int StateID = reader["StateID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["StateID"]);
-            address.State = ToolBag.GetStateAbbr(acdConnString, StateID);
-            address.Province = reader["Province"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Province"]).Trim();
-            address.ZipCode = reader["Zip"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Zip"]).Trim();
-            int countryID = reader["CountryID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CountryID"]);
-            address.Country = ToolBag.GetCountryName(acdConnString, countryID);
-            address.Phone = reader["Phone"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Phone"]).Trim();
-            address.Fax = reader["Fax"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Fax"]).Trim();
-            address.Email = reader["Email"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Email"]).Trim();
-            return address;
-        }
     }
 }
